@@ -127,7 +127,7 @@
   }
   @keyframes sp { to { transform: rotate(360deg); } }
 
-  /* ── 예매 정보(확정 · 고를 수 없음) ─────────── */
+  /* ── 예매 정보(고객이 고르는 값이 아니다) ───── */
   .fixed {
     background: var(--tint); border: 1px solid #d8e6e6; border-radius: 12px;
     padding: 15px 16px; margin-bottom: 16px;
@@ -136,7 +136,6 @@
     display: flex; align-items: center; gap: 6px; margin-bottom: 11px;
     font-size: 11.5px; font-weight: 800; letter-spacing: .6px; color: var(--teal);
   }
-  .fixed .cap .lock { font-size: 12px; }
   .fixed .show { font-size: 16px; font-weight: 800; letter-spacing: -.3px; line-height: 1.4; margin-bottom: 10px; }
   .stay { display: flex; align-items: stretch; gap: 10px; padding-top: 11px; border-top: 1px dashed #c6dcdc; }
   .stay .leg { flex: 1; min-width: 0; }
@@ -174,7 +173,7 @@
   .room:disabled .left { background: #eef0f1; color: #9aa1a8; }
   .room .low { background: #fdf0e8; color: #b4551f; }
 
-  /* ── 확정 바 ──────────────────────────────── */
+  /* ── 저장 확인 바 ─────────────────────────── */
   .confirm {
     margin-top: 14px; padding: 15px 15px 14px; border-radius: 12px;
     background: var(--warn-bg); border: 1px solid #efe0c8;
@@ -196,7 +195,7 @@
     background: var(--teal); color: #fff; font-size: 29px; line-height: 60px; font-weight: 700;
     box-shadow: 0 8px 20px rgba(11,111,120,.26);
   }
-  .done-top h2 { margin: 0 0 6px; font-size: 23px; font-weight: 800; letter-spacing: -.5px; }
+  .done-top h2 { margin: 0; font-size: 21px; font-weight: 800; letter-spacing: -.5px; text-wrap: balance; }
   .done-top p { margin: 0; color: var(--ink-2); font-size: 14.5px; line-height: 1.65; }
   .kv { display: flex; justify-content: space-between; align-items: baseline; gap: 14px; padding: 12px 0; border-bottom: 1px solid #eef0f2; font-size: 14.5px; }
   .kv:last-child { border-bottom: 0; padding-bottom: 0; }
@@ -267,7 +266,7 @@
         <p class="lede" id="lede2">예매하신 공연 날짜의 숙박입니다. 남은 객실 중 하나를 골라 주세요.</p>
 
         <div class="fixed">
-          <div class="cap"><span class="lock" aria-hidden="true">🔒</span><span>예매 확정 내역 · 변경 불가</span></div>
+          <div class="cap"><span>예매하신 공연 · 숙박일</span></div>
           <div class="show" id="fShow">-</div>
           <div class="stay">
             <div class="leg"><div class="k">체크인</div><div class="v" id="fIn">-</div><div class="t" id="fInT">숙박 시설 입실</div></div>
@@ -293,7 +292,7 @@
         <button id="save" class="btn" type="button" disabled>객실을 선택해 주세요</button>
 
         <div id="confirm" class="confirm hide">
-          <p id="confirmTxt">이 객실로 확정할까요? 저장 후에는 변경하실 수 없습니다.</p>
+          <p id="confirmTxt">이 객실로 저장할까요?</p>
           <div class="pair">
             <button id="cCancel" class="btn ghost sm" type="button">취소</button>
             <button id="cOk" class="btn sm" type="button">네, 저장할게요</button>
@@ -301,7 +300,7 @@
         </div>
 
         <div id="m2" class="msg err hide" role="alert"></div>
-        <p class="note">한 번 저장하면 담당자를 통해서만 변경하실 수 있어요.<br>숙박 시설 사정에 따라 <b>디럭스</b> 타입으로 상향 조정될 수 있습니다(예매 순서 기준).</p>
+        <p class="note">저장 후에도 변경이 필요하시면 담당자에게 연락해 주세요.<br>숙박 시설 사정에 따라 <b>디럭스</b> 타입으로 상향 조정될 수 있습니다(예매 순서 기준).</p>
       </div>
     </section>
 
@@ -310,8 +309,7 @@
       <div class="card">
         <div class="done-top">
           <div class="seal" aria-hidden="true">✓</div>
-          <h2 id="h3">감사합니다</h2>
-          <p>객실 선택이 정상적으로 접수되었습니다.<br>확정 내용은 <b>추후 문자로 안내</b>드리겠습니다.</p>
+          <h2 id="h3">객실 선택이 접수되었습니다</h2>
         </div>
         <div class="divider"></div>
         <div class="kv"><span class="k">예매자</span><span class="v" id="dName">-</span></div>
@@ -334,7 +332,7 @@
 
       <div class="card">
         <h2>문의</h2>
-        <p class="lede" style="margin-bottom:14px">변경이 필요하시거나 궁금한 점이 있으시면 연락 주세요.<br><span style="color:var(--ink-3);font-size:13.5px">예울마루 대표전화 · 화~토 10:00~18:00</span></p>
+        <p class="lede" style="margin-bottom:14px">객실 변경이 필요하시거나 궁금한 점이 있으시면 연락 주세요.<br><span style="color:var(--ink-3);font-size:13.5px">예울마루 대표전화 · 화~토 10:00~18:00</span></p>
         <a class="call" href="tel:15447669"><span aria-hidden="true">☎</span> 1544-7669</a>
       </div>
     </section>
@@ -400,7 +398,7 @@
       ' ' + p(d.getHours()) + ':' + p(d.getMinutes());
   }
 
-  /* ── 예매 확정 내역(공연 = 숙박일) ─────────── */
+  /* ── 예매 내역(공연 = 숙박일) ──────────────── */
   function paintStay(stay) {
     state.stay = stay || null;
     if (!stay) {
@@ -520,7 +518,7 @@
 
   /* ── 2단계: 저장(2단 확인) ───────────────── */
   function showConfirm() {
-    $('confirmTxt').textContent = '‘' + nameOf(state.pick) + '’으로 확정할까요? 저장 후에는 변경하실 수 없습니다.';
+    $('confirmTxt').textContent = '‘' + nameOf(state.pick) + '’으로 저장할까요?';
     $('confirm').classList.remove('hide');
     saveEl.classList.add('hide');
     $('cOk').focus();
