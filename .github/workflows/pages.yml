@@ -1,0 +1,46 @@
+# 미리보기 화면을 GitHub Pages 로 올린다.
+#
+# ⚠ 이건 보여주기용 링크다. GitHub Pages 는 정적 호스팅이라 functions/api/book.js 가 안 돈다.
+#    저장은 그 사람 브라우저 안에서만 되고, 남은 수량이 사람들 사이에 공유되지 않는다.
+#    실제 고객에게 보낼 링크는 서버가 있는 곳에 올려야 한다 — README.md 4번.
+name: 미리보기 배포
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:      # Actions 탭에서 손으로도 돌릴 수 있게
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: 검증 (58축)
+        run: node test.mjs
+      - name: 미리보기 만들기
+        run: node tools/preview.mjs
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: preview
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

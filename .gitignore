@@ -1,0 +1,6 @@
+# 관리자 접속 정보 — 절대 커밋하지 않는다
+.booking.json
+node_modules/
+
+# 미리보기 빌드 산출물 — CI 가 만든다
+preview/

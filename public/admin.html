@@ -1,0 +1,321 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAzMiAzMiI+PHJlY3Qgd2lkdGg9IjMyIiBoZWlnaHQ9IjMyIiByeD0iNyIgZmlsbD0iIzBiNmY3OCIvPjxwYXRoIGQ9Ik02IDExaDIuNHYxMkg2eiIgZmlsbD0iI2ZmZiIvPjxwYXRoIGQ9Ik04LjQgMTdIMjZ2NmgtMi40di0zLjRIOC40eiIgZmlsbD0iI2ZmZiIvPjxyZWN0IHg9IjEwLjQiIHk9IjEyLjYiIHdpZHRoPSI3LjQiIGhlaWdodD0iMy40IiByeD0iMS43IiBmaWxsPSIjN2ZlM2Q2Ii8+PC9zdmc+">
+<title>예매 관리 · 예울마루 STAY 패키지</title>
+<style>
+  :root {
+    --deep: #0b374d; --teal: #0b6f78; --teal-dk: #0b4f58; --tint: #f2f7f7;
+    --paper: #f5f4f1; --ink: #16181d; --ink-2: #4f5862; --ink-3: #8b919c;
+    --line: #e4e7ea; --line-2: #d3d8dd; --err-bg: #fdecec; --err-fg: #b42318;
+  }
+  *, *::before, *::after { box-sizing: border-box; }
+  html { color-scheme: light; }
+  body {
+    margin: 0; padding: 0 0 calc(48px + env(safe-area-inset-bottom));
+    background: var(--paper); color: var(--ink);
+    font: 400 15px/1.6 -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Pretendard", "Malgun Gothic", "Noto Sans KR", sans-serif;
+    word-break: keep-all;
+  }
+  .wrap { max-width: 760px; margin: 0 auto; padding: 0 16px; }
+  .top { background: var(--deep); color: #fff; padding: 22px 0 20px; margin-bottom: 18px; }
+  .top .wrap { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+  .top h1 { font-size: 18px; margin: 0; font-weight: 800; letter-spacing: -.3px; }
+  .top .sub { font-size: 12.5px; color: rgba(255,255,255,.6); }
+  h2 { font-size: 15.5px; margin: 0 0 4px; font-weight: 800; display: flex; align-items: center; gap: 7px; }
+  h2::before { content: ''; width: 3px; height: 14px; border-radius: 2px; background: var(--teal); }
+  .card { background: #fff; border: 1px solid var(--line); border-radius: 13px; padding: 17px 16px; margin-bottom: 13px; }
+  label { display: block; font-size: 12.5px; font-weight: 700; margin-bottom: 6px; color: var(--ink-2); }
+  input, textarea {
+    width: 100%; padding: 11px 12px; font-size: 15px; font-family: inherit; color: inherit;
+    border: 1px solid var(--line-2); border-radius: 10px; background: #fff; -webkit-appearance: none; appearance: none;
+  }
+  textarea { min-height: 150px; resize: vertical; line-height: 1.55; font-size: 14px; }
+  input:focus, textarea:focus { outline: none; border-color: var(--teal); box-shadow: 0 0 0 3px rgba(11,111,120,.13); }
+  button {
+    min-height: 46px; padding: 0 17px; border: 0; border-radius: 10px; cursor: pointer;
+    font-family: inherit; font-size: 15px; font-weight: 800; color: #fff; background: var(--teal);
+    -webkit-tap-highlight-color: transparent; touch-action: manipulation;
+  }
+  button.ghost { background: #eef1f2; color: var(--ink-2); }
+  button:disabled { background: #c3cace; }
+  button.sm { min-height: 33px; padding: 0 10px; font-size: 12.5px; }
+  .row { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+  .muted { color: var(--ink-3); font-size: 12.5px; line-height: 1.65; }
+
+  /* 현황 요약 */
+  .sum { display: grid; gap: 9px; margin-bottom: 13px; }
+  .gcard { border: 1px solid var(--line); border-radius: 11px; padding: 12px 13px; background: var(--tint); }
+  .gcard .hd { display: flex; align-items: baseline; gap: 8px; margin-bottom: 8px; flex-wrap: wrap; }
+  .gcard .d { font-size: 15px; font-weight: 800; color: var(--teal-dk); }
+  .gcard .t { font-size: 13px; color: var(--ink-2); font-weight: 600; flex: 1; min-width: 0; }
+  .gcard .nums { display: flex; gap: 7px; }
+  .gcard .n { flex: 1; background: #fff; border: 1px solid #dcebeb; border-radius: 8px; padding: 7px 9px; }
+  .gcard .n .k { font-size: 11px; color: var(--ink-3); font-weight: 700; }
+  .gcard .n .v { font-size: 17px; font-weight: 800; letter-spacing: -.4px; }
+  .gcard .n .v small { font-size: 12px; font-weight: 700; color: var(--ink-3); }
+  .gcard .n.zero .v { color: var(--err-fg); }
+  .tot { background: #fff; border: 1px solid var(--line); border-radius: 11px; padding: 11px 13px; font-size: 13.5px; font-weight: 700; color: var(--ink-2); }
+  .tot b { color: var(--teal-dk); }
+
+  /* 명단 카드(폰에서 밀리지 않게 표 대신 카드) */
+  .bk { border: 1px solid var(--line); border-radius: 11px; padding: 11px 12px; margin-bottom: 8px; display: flex; align-items: center; gap: 10px; }
+  .bk .m { flex: 1; min-width: 0; }
+  .bk .l1 { font-size: 14.5px; font-weight: 800; letter-spacing: -.2px; }
+  .bk .l1 .p4 { color: var(--teal); font-variant-numeric: tabular-nums; }
+  .bk .l2 { font-size: 12.5px; color: var(--ink-3); margin-top: 2px; }
+  .bk .rt { flex: none; text-align: right; }
+  .bk .ty { font-size: 12.5px; font-weight: 800; padding: 4px 8px; border-radius: 7px; background: var(--tint); color: var(--teal-dk); white-space: nowrap; }
+  .pend { display: inline-block; margin: 0 6px 6px 0; padding: 6px 9px; border-radius: 8px; background: #f6f7f8; border: 1px solid var(--line); font-size: 13px; font-weight: 700; }
+  .pend small { color: var(--ink-3); font-weight: 600; }
+
+  /* 공연·수량 편집 */
+  .ed { border: 1px solid var(--line); border-radius: 11px; padding: 13px; margin-bottom: 9px; }
+  .ed .g { display: inline-block; font-size: 11px; font-weight: 800; color: #fff; background: var(--teal); border-radius: 5px; padding: 2px 7px; margin-bottom: 9px; }
+  .ed .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 8px; }
+  .msg { margin-top: 10px; padding: 10px 12px; border-radius: 9px; font-size: 13.5px; font-weight: 700; white-space: pre-wrap; line-height: 1.55; }
+  .msg.err { background: var(--err-bg); color: var(--err-fg); }
+  .msg.ok { background: var(--tint); color: var(--teal-dk); }
+  .hide { display: none !important; }
+  .cli { background: #0f2027; color: #cfe6e6; border-radius: 11px; padding: 13px 14px; font: 600 12.5px/1.7 ui-monospace, SFMono-Regular, Menlo, monospace; overflow-x: auto; }
+  .cli b { color: #7fe3d6; font-weight: 700; }
+</style>
+</head>
+<body>
+<div class="top"><div class="wrap"><h1>예매 관리</h1><span class="sub">예울마루 STAY 패키지 · 객실 선택</span></div></div>
+<div class="wrap">
+
+  <section id="lock">
+    <div class="card">
+      <label for="pin">관리자 비번</label>
+      <div class="row">
+        <input id="pin" type="password" autocomplete="current-password" style="flex:1;min-width:160px">
+        <button id="login" type="button">들어가기</button>
+      </div>
+      <div id="mL" class="msg err hide"></div>
+    </div>
+  </section>
+
+  <section id="panel" class="hide">
+    <div class="card">
+      <h2>남은 객실</h2>
+      <p class="muted" style="margin:0 0 12px">남은 수량은 저장하지 않고 <b>정원 − 실제 선택 건수</b>로 매번 계산한다.</p>
+      <div class="sum" id="sum"></div>
+      <div class="tot" id="tot"></div>
+      <div class="row" style="margin-top:12px">
+        <button id="reload" class="ghost" type="button">새로고침</button>
+        <button id="csv" class="ghost" type="button">표 복사(엑셀)</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>선택 완료 <span id="cntDone" class="muted" style="font-weight:700"></span></h2>
+      <div id="rows" style="margin-top:11px"><p class="muted">불러오는 중...</p></div>
+    </div>
+
+    <div class="card">
+      <h2>아직 안 고른 사람 <span id="cntPend" class="muted" style="font-weight:700"></span></h2>
+      <p class="muted" style="margin:0 0 11px">링크를 다시 보내야 할 대상.</p>
+      <div id="pend"></div>
+    </div>
+
+    <div class="card">
+      <h2>명단 등록</h2>
+      <p class="muted" style="margin:0 0 10px">한 줄에 한 명씩 <b>뒷4자리, 공연(a·b·c), 이름</b>. 이름은 없어도 된다.<br>
+        엑셀 세 칸을 그대로 복사해 붙여넣어도 된다. <b>저장하면 기존 명단은 통째로 교체</b>된다.</p>
+      <textarea id="ros" placeholder="1234, a, 홍길동&#10;5678, b, 김철수&#10;9012, c"></textarea>
+      <div class="row" style="margin-top:10px"><button id="saveRos" type="button">명단 저장</button></div>
+      <div id="mR" class="msg hide"></div>
+    </div>
+
+    <div class="card">
+      <h2>공연 · 날짜 · 수량</h2>
+      <p class="muted" style="margin:0 0 12px">공연 날짜가 곧 <b>숙박일(체크인)</b>이다. 고객 화면에는 이 값이 그대로 뜬다.</p>
+      <div id="ed"></div>
+      <div class="row" style="margin-top:4px"><button id="saveStk" type="button">저장</button></div>
+      <p class="muted" style="margin:11px 0 0">이미 선택된 건수보다 적게 줄이면 남은 수량은 0으로 표시된다(기존 선택은 안 지워진다).</p>
+      <div id="mS" class="msg hide"></div>
+    </div>
+
+    <div class="card">
+      <h2>터미널에서 보기</h2>
+      <p class="muted" style="margin:0 0 11px">이 화면 없이도 클로드코드·터미널에서 바로 확인할 수 있다.</p>
+      <div class="cli"><b>node tools/rooms.mjs</b>          남은 객실<br>
+<b>node tools/rooms.mjs list</b>     선택 완료 목록<br>
+<b>node tools/rooms.mjs pending</b>  아직 안 고른 사람<br>
+<b>node tools/rooms.mjs who 1234</b> 한 사람 조회<br>
+<b>node tools/rooms.mjs cancel 1234</b> 선택 취소</div>
+    </div>
+  </section>
+</div>
+
+<script>
+(function () {
+  var $ = function (id) { return document.getElementById(id); };
+  var PIN = '', last = null;
+  var DAY = ['일', '월', '화', '수', '목', '금', '토'];
+  var TN = { double: '스탠다드 더블', twin: '스탠다드 트윈' };
+
+  function esc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]; }); }
+  function say(el, text, kind) {
+    el.textContent = text || '';
+    el.className = 'msg ' + (kind || 'err') + (text ? '' : ' hide');
+  }
+  function api(body) {
+    body.pin = PIN;
+    return fetch('/api/book', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(body) })
+      .then(function (r) { return r.json(); })
+      .catch(function () { return { ok: false, msg: '연결 실패' }; });
+  }
+  function dstr(s) {
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(String(s || ''))) return '';
+    var a = String(s).split('-').map(Number);
+    return a[1] + '/' + a[2] + '(' + DAY[new Date(Date.UTC(a[0], a[1] - 1, a[2])).getUTCDay()] + ')';
+  }
+  function when(ms) {
+    var d = new Date(ms), p = function (n) { return (n < 10 ? '0' : '') + n; };
+    return (d.getMonth() + 1) + '/' + d.getDate() + ' ' + p(d.getHours()) + ':' + p(d.getMinutes());
+  }
+
+  $('login').addEventListener('click', function () {
+    PIN = $('pin').value;
+    if (!PIN) { say($('mL'), '비번을 입력해줘.'); return; }
+    api({ op: 'admin_get' }).then(function (r) {
+      if (!r.ok) { say($('mL'), r.msg || '들어가지 못했어.'); return; }
+      try { sessionStorage.setItem('bkpin', PIN); } catch (e) {}
+      $('lock').classList.add('hide'); $('panel').classList.remove('hide');
+      paint(r);
+    });
+  });
+  $('pin').addEventListener('keydown', function (e) { if (e.key === 'Enter') $('login').click(); });
+
+  function paint(r) {
+    last = r;
+    var cap = r.cap || {}, labels = r.labels || {}, left = r.left || {}, shows = r.shows || {}, stay = r.stay || {};
+    var keys = Object.keys(cap); if (!keys.length) keys = ['a', 'b', 'c'];
+
+    // 남은 객실
+    var h = '', tl = 0, tc = 0;
+    keys.forEach(function (g) {
+      var c = cap[g] || {}, l = left[g] || {}, s = shows[g] || {}, st = stay[g] || {};
+      var sd = (l.double == null ? 0 : l.double), sw = (l.twin == null ? 0 : l.twin);
+      tl += sd + sw; tc += (c.double || 0) + (c.twin || 0);
+      h += '<div class="gcard"><div class="hd"><span class="d">' + esc(dstr(st.date) || labels[g] || g.toUpperCase()) + '</span>' +
+        '<span class="t">' + esc(s.title || '') + '</span></div><div class="nums">' +
+        '<div class="n' + (sd ? '' : ' zero') + '"><div class="k">스탠다드 더블</div><div class="v">' + sd + ' <small>/ ' + (c.double || 0) + '</small></div></div>' +
+        '<div class="n' + (sw ? '' : ' zero') + '"><div class="k">스탠다드 트윈</div><div class="v">' + sw + ' <small>/ ' + (c.twin || 0) + '</small></div></div>' +
+        '</div></div>';
+    });
+    $('sum').innerHTML = h;
+    $('tot').innerHTML = '전체 <b>' + tl + ' / ' + tc + '실</b> 남음 · 선택 완료 <b>' + (r.rows || []).length +
+      '건</b> · 명단 <b>' + (r.rosterCount || 0) + '명</b> · 미선택 <b>' + (r.pending || []).length + '명</b>';
+
+    // 선택 완료
+    var rows = r.rows || [];
+    $('cntDone').textContent = rows.length + '건';
+    $('rows').innerHTML = rows.length ? rows.map(function (b) {
+      return '<div class="bk"><div class="m"><div class="l1">' + esc(b.name || '이름없음') +
+        ' <span class="p4">' + esc(b.p4) + '</span></div><div class="l2">' +
+        esc(dstr(b.stayDate) || labels[b.group] || b.group) + ' · ' + esc(b.show || (shows[b.group] || {}).title || '') +
+        ' · ' + when(b.at) + '</div></div><div class="rt"><span class="ty">' +
+        esc(b.type === 'double' ? '더블' : '트윈') + '</span><br>' +
+        '<button class="ghost sm" data-cx="' + esc(b.p4) + '" type="button" style="margin-top:6px">취소</button></div></div>';
+    }).join('') : '<p class="muted">아직 선택한 사람이 없다.</p>';
+
+    // 미선택
+    var pend = r.pending || [];
+    $('cntPend').textContent = pend.length + '명';
+    $('pend').innerHTML = pend.length ? pend.map(function (p) {
+      return '<span class="pend">' + esc(p.p4) + ' <small>' + esc(p.name || '') + ' · ' +
+        esc(dstr((stay[p.g] || {}).date) || p.g) + '</small></span>';
+    }).join('') : '<p class="muted">전원 선택을 마쳤다.</p>';
+
+    // 공연·날짜·수량 편집
+    $('ed').innerHTML = keys.map(function (g) {
+      var c = cap[g] || {}, s = shows[g] || {};
+      return '<div class="ed"><span class="g">' + esc(g.toUpperCase()) + '</span>' +
+        '<label>공연명</label><input data-sh="' + g + '" data-f="title" value="' + esc(s.title || '') + '" maxlength="120">' +
+        '<div class="grid">' +
+        '<div><label>공연일 = 숙박일</label><input data-sh="' + g + '" data-f="date" type="date" value="' + esc(s.date || '') + '"></div>' +
+        '<div><label>공연 시각</label><input data-sh="' + g + '" data-f="time" value="' + esc(s.time || '') + '" placeholder="19:30" maxlength="10"></div>' +
+        '<div><label>스탠다드 더블</label><input data-cap="' + g + '" data-t="double" type="number" min="0" inputmode="numeric" value="' + (c.double || 0) + '"></div>' +
+        '<div><label>스탠다드 트윈</label><input data-cap="' + g + '" data-t="twin" type="number" min="0" inputmode="numeric" value="' + (c.twin || 0) + '"></div>' +
+        '</div><div style="margin-top:8px"><label>짧은 표기(관리용)</label><input data-lb="' + g + '" value="' + esc(labels[g] || g.toUpperCase()) + '" maxlength="20"></div></div>';
+    }).join('');
+  }
+
+  function reload() { api({ op: 'admin_get' }).then(function (r) { if (r.ok) paint(r); }); }
+  $('reload').addEventListener('click', reload);
+
+  $('rows').addEventListener('click', function (e) {
+    var b = e.target.closest('[data-cx]'); if (!b) return;
+    var p4 = b.getAttribute('data-cx');
+    if (!window.confirm('뒷4자리 ' + p4 + ' 선택을 취소할게. 그 자리는 다시 열려.')) return;
+    b.disabled = true;
+    api({ op: 'admin_cancel', p4: p4 }).then(function (r) { if (r.ok) reload(); else b.disabled = false; });
+  });
+
+  $('csv').addEventListener('click', function () {
+    var r = last || {}, t = '접수시각\t뒷4자리\t이름\t숙박일\t공연\t객실\n';
+    (r.rows || []).forEach(function (b) {
+      t += new Date(b.at).toLocaleString('ko-KR') + '\t' + b.p4 + '\t' + (b.name || '') + '\t' +
+        (b.stayDate || '') + '\t' + (b.show || ((r.shows || {})[b.group] || {}).title || '') + '\t' +
+        (b.typeName || TN[b.type] || b.type) + '\n';
+    });
+    var ta = document.createElement('textarea');
+    ta.value = t; ta.style.position = 'fixed'; ta.style.opacity = '0';
+    document.body.appendChild(ta); ta.select();
+    try { document.execCommand('copy'); alert('복사했어. 엑셀에 붙여넣어줘.'); }
+    catch (e) { alert('복사가 막혔어. 표를 직접 긁어서 복사해줘.'); }
+    document.body.removeChild(ta);
+  });
+
+  $('saveRos').addEventListener('click', function () {
+    var txt = $('ros').value.trim();
+    if (!txt) { say($('mR'), '명단이 비어 있어.'); return; }
+    if (!window.confirm('기존 명단을 이 내용으로 통째로 바꿀게. 진행할까?')) return;
+    say($('mR'), '저장 중...', 'ok');
+    api({ op: 'admin_roster', text: txt }).then(function (r) {
+      if (!r.ok) { say($('mR'), r.msg || '저장 실패'); return; }
+      var m = r.count + '명 저장했어.';
+      if (r.dups && r.dups.length) m += '\n⚠ 뒷4자리가 겹쳐서 뒤엣것을 버렸어: ' + r.dups.join(', ');
+      if (r.bad && r.bad.length) m += '\n⚠ 형식이 안 맞아 건너뛴 줄 ' + r.bad.length + '개: ' + r.bad.slice(0, 3).join(' / ');
+      say($('mR'), m, (r.dups && r.dups.length) || (r.bad && r.bad.length) ? 'err' : 'ok');
+      reload();
+    });
+  });
+
+  $('saveStk').addEventListener('click', function () {
+    var cap = {}, labels = {}, shows = {};
+    Array.prototype.forEach.call(document.querySelectorAll('[data-cap]'), function (i) {
+      var g = i.getAttribute('data-cap');
+      cap[g] = cap[g] || {};
+      cap[g][i.getAttribute('data-t')] = Math.max(0, parseInt(i.value, 10) || 0);
+    });
+    Array.prototype.forEach.call(document.querySelectorAll('[data-lb]'), function (i) {
+      labels[i.getAttribute('data-lb')] = i.value.trim();
+    });
+    Array.prototype.forEach.call(document.querySelectorAll('[data-sh]'), function (i) {
+      var g = i.getAttribute('data-sh');
+      shows[g] = shows[g] || {};
+      shows[g][i.getAttribute('data-f')] = i.value.trim();
+    });
+    say($('mS'), '저장 중...', 'ok');
+    api({ op: 'admin_stock', cap: cap, labels: labels, shows: shows }).then(function (r) {
+      if (!r.ok) { say($('mS'), r.msg || '저장 실패'); return; }
+      say($('mS'), '저장했어. 고객 화면에 바로 반영된다.', 'ok');
+      reload();
+    });
+  });
+
+  try {
+    var saved = sessionStorage.getItem('bkpin');
+    if (saved) { $('pin').value = saved; $('login').click(); }
+  } catch (e) {}
+})();
+</script>
+</body>
+</html>
