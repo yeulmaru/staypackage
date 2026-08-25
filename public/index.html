@@ -1,0 +1,565 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="format-detection" content="telephone=no">
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#0b374d">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><rect width="32" height="32" rx="7" fill="%230b6f78"/><path d="M6 11h2.4v12H6z" fill="%23fff"/><path d="M8.4 17H26v6h-2.4v-3.4H8.4z" fill="%23fff"/><rect x="10.4" y="12.6" width="7.4" height="3.4" rx="1.7" fill="%237fe3d6"/></svg>">
+<title>객실 선택 · 예울마루 STAY 패키지</title>
+<style>
+  :root {
+    --deep:    #0b374d;   /* 히어로 딥 네이비틸 */
+    --deep-2:  #0d4157;
+    --teal:    #0b6f78;   /* 프라이머리 */
+    --teal-dk: #0b4f58;
+    --mint:    #7fe3d6;   /* 딥 배경 위 강조 */
+    --tint:    #f2f7f7;   /* 틸 틴트 패널 */
+    --paper:   #f5f4f1;   /* 따뜻한 회색 패널 */
+    --ink:     #16181d;
+    --ink-2:   #4f5862;
+    --ink-3:   #8b919c;
+    --line:    #e4e7ea;
+    --line-2:  #d3d8dd;
+    --warn-bg: #fdf6ec;
+    --warn-fg: #8a6b3c;
+    --err-bg:  #fdecec;
+    --err-fg:  #b42318;
+    --radius:  14px;
+  }
+  *, *::before, *::after { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; color-scheme: light; }
+  body {
+    margin: 0; padding: 0 0 calc(40px + env(safe-area-inset-bottom));
+    background: var(--paper); color: var(--ink);
+    font: 400 16px/1.6 -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Pretendard", "Malgun Gothic", "Noto Sans KR", sans-serif;
+    -webkit-font-smoothing: antialiased;
+    word-break: keep-all; overflow-wrap: anywhere;
+  }
+  .wrap { max-width: 480px; margin: 0 auto; }
+
+  /* ── 히어로 ───────────────────────────────── */
+  .hero {
+    position: relative; overflow: hidden;
+    background: linear-gradient(168deg, #0a2f43 0%, var(--deep) 46%, var(--deep-2) 100%);
+    color: #fff; padding: calc(30px + env(safe-area-inset-top)) 22px 74px;
+  }
+  .hero::after {   /* 홍보물의 세로 라인 결 */
+    content: ''; position: absolute; inset: 0; pointer-events: none; opacity: .5;
+    background: repeating-linear-gradient(90deg, rgba(255,255,255,.05) 0 1px, transparent 1px 42px);
+  }
+  .hero > * { position: relative; }
+  .eyebrow { margin: 0; font-size: 13px; font-weight: 700; letter-spacing: -.2px; color: rgba(255,255,255,.82); }
+  .beyond { margin: 20px 0 5px; font-size: 11px; font-weight: 700; letter-spacing: 3.4px; color: rgba(255,255,255,.55); }
+  .hero h1 { margin: 0; font-size: 33px; line-height: 1.1; font-weight: 800; letter-spacing: -.6px; }
+  .hero .tag {
+    display: inline-block; margin-top: 15px; padding: 7px 13px; border-radius: 8px;
+    background: rgba(255,255,255,.13); border: 1px solid rgba(255,255,255,.18);
+    font-size: 13px; font-weight: 700; color: var(--mint);
+  }
+
+  /* ── 진행 단계 ─────────────────────────────── */
+  .steps { display: flex; gap: 6px; margin: -56px 18px 0; position: relative; z-index: 2; }
+  .steps li {
+    flex: 1; list-style: none; text-align: center; padding: 9px 2px 8px; border-radius: 10px;
+    background: rgba(255,255,255,.12); border: 1px solid rgba(255,255,255,.16);
+    font-size: 11.5px; font-weight: 700; color: rgba(255,255,255,.62);
+    transition: background .18s, color .18s, border-color .18s;
+  }
+  .steps li .n {
+    display: block; margin: 0 auto 3px; width: 19px; height: 19px; border-radius: 50%;
+    background: rgba(255,255,255,.2); color: rgba(255,255,255,.75);
+    font-size: 11px; line-height: 19px; font-weight: 800;
+  }
+  .steps li[aria-current="step"] { background: #fff; border-color: #fff; color: var(--deep); box-shadow: 0 5px 16px rgba(6,32,45,.24); }
+  .steps li[aria-current="step"] .n { background: var(--teal); color: #fff; }
+  .steps li.past { color: rgba(255,255,255,.85); }
+  .steps li.past .n { background: var(--mint); color: var(--deep); }
+
+  /* ── 카드 ─────────────────────────────────── */
+  .body { padding: 18px 18px 0; }
+  .card {
+    background: #fff; border: 1px solid var(--line); border-radius: var(--radius);
+    padding: 20px 18px; margin-bottom: 13px; box-shadow: 0 1px 2px rgba(11,55,77,.04);
+  }
+  .card > h2 {
+    margin: 0 0 4px; font-size: 19px; font-weight: 800; letter-spacing: -.4px;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .card > h2::before { content: ''; width: 3px; height: 17px; border-radius: 2px; background: var(--teal); }
+  .lede { margin: 0 0 18px; color: var(--ink-2); font-size: 14.5px; }
+  .note { margin: 14px 2px 0; color: var(--ink-3); font-size: 12.8px; line-height: 1.65; }
+
+  /* ── 입력 ─────────────────────────────────── */
+  label { display: block; font-size: 13.5px; font-weight: 700; margin-bottom: 9px; color: var(--ink-2); }
+  .pinbox { position: relative; }
+  input[type=tel] {
+    width: 100%; height: 62px; padding: 0 16px;
+    font: 700 27px/1 -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Pretendard", sans-serif;
+    letter-spacing: 12px; text-indent: 12px; text-align: center; color: var(--ink);
+    border: 1.5px solid var(--line-2); border-radius: 12px; background: #fff;
+    -webkit-appearance: none; appearance: none; transition: border-color .15s, box-shadow .15s;
+  }
+  input[type=tel]::placeholder { color: #cfd4d9; font-weight: 600; }
+  input[type=tel]:focus { outline: none; border-color: var(--teal); box-shadow: 0 0 0 3px rgba(11,111,120,.15); }
+  .dots { display: flex; justify-content: center; gap: 7px; margin-top: 11px; }
+  .dots i { width: 7px; height: 7px; border-radius: 50%; background: var(--line-2); transition: background .15s, transform .15s; }
+  .dots i.on { background: var(--teal); transform: scale(1.18); }
+
+  /* ── 버튼 ─────────────────────────────────── */
+  .btn {
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+    width: 100%; min-height: 56px; padding: 0 18px; border: 0; border-radius: 12px; cursor: pointer;
+    font-family: inherit; font-size: 16.5px; font-weight: 800; letter-spacing: -.2px;
+    color: #fff; background: var(--teal);
+    -webkit-tap-highlight-color: transparent; touch-action: manipulation;
+    transition: filter .12s, background .12s;
+  }
+  .btn:disabled { background: #c3cace; cursor: default; }
+  .btn:active:not(:disabled) { filter: brightness(.92); }
+  .btn:focus-visible { outline: 3px solid rgba(11,111,120,.4); outline-offset: 2px; }
+  .btn.ghost { background: #eef1f2; color: var(--ink-2); }
+  .btn.sm { min-height: 48px; font-size: 15px; }
+  .spin {
+    width: 16px; height: 16px; border: 2px solid rgba(255,255,255,.35); border-top-color: #fff;
+    border-radius: 50%; animation: sp .7s linear infinite;
+  }
+  @keyframes sp { to { transform: rotate(360deg); } }
+
+  /* ── 예매 정보(확정 · 고를 수 없음) ─────────── */
+  .fixed {
+    background: var(--tint); border: 1px solid #d8e6e6; border-radius: 12px;
+    padding: 15px 16px; margin-bottom: 16px;
+  }
+  .fixed .cap {
+    display: flex; align-items: center; gap: 6px; margin-bottom: 11px;
+    font-size: 11.5px; font-weight: 800; letter-spacing: .6px; color: var(--teal);
+  }
+  .fixed .cap .lock { font-size: 12px; }
+  .fixed .show { font-size: 16px; font-weight: 800; letter-spacing: -.3px; line-height: 1.4; margin-bottom: 10px; }
+  .stay { display: flex; align-items: stretch; gap: 10px; padding-top: 11px; border-top: 1px dashed #c6dcdc; }
+  .stay .leg { flex: 1; min-width: 0; }
+  .stay .leg .k { font-size: 11.5px; font-weight: 700; color: var(--teal); margin-bottom: 3px; }
+  .stay .leg .v { font-size: 15px; font-weight: 800; letter-spacing: -.3px; }
+  .stay .leg .t { font-size: 12px; color: var(--ink-3); margin-top: 1px; }
+  .stay .arrow { align-self: center; color: #a9c4c4; font-size: 15px; }
+
+  /* ── 객실 카드 ─────────────────────────────── */
+  .rooms { display: grid; gap: 10px; }
+  .room {
+    position: relative; display: flex; align-items: center; gap: 13px; width: 100%;
+    padding: 16px 15px; text-align: left; cursor: pointer;
+    background: #fff; color: var(--ink); border: 1.5px solid var(--line-2); border-radius: 13px;
+    font-family: inherit; -webkit-tap-highlight-color: transparent;
+    transition: border-color .14s, background .14s, box-shadow .14s;
+  }
+  .room .mark {
+    flex: none; width: 22px; height: 22px; border-radius: 50%;
+    border: 2px solid var(--line-2); background: #fff; transition: border-color .14s, background .14s;
+  }
+  .room .info { flex: 1; min-width: 0; }
+  .room .nm { display: block; font-size: 16.5px; font-weight: 800; letter-spacing: -.3px; }
+  .room .ds { display: block; font-size: 12.8px; color: var(--ink-3); margin-top: 2px; }
+  .room .left {
+    flex: none; font-size: 12.5px; font-weight: 800; padding: 5px 9px; border-radius: 7px;
+    background: var(--tint); color: var(--teal); white-space: nowrap;
+  }
+  .room[aria-checked="true"] { border-color: var(--teal); background: #f7fcfc; box-shadow: 0 0 0 3px rgba(11,111,120,.11); }
+  .room[aria-checked="true"] .mark { border-color: var(--teal); background: var(--teal); box-shadow: inset 0 0 0 3.5px #fff; }
+  .room:focus-visible { outline: 3px solid rgba(11,111,120,.4); outline-offset: 2px; }
+  .room:disabled { cursor: default; background: #f7f8f8; border-color: var(--line); }
+  .room:disabled .nm, .room:disabled .ds { color: #adb3ba; }
+  .room:disabled .mark { border-color: #dfe3e6; }
+  .room:disabled .left { background: #eef0f1; color: #9aa1a8; }
+  .room .low { background: #fdf0e8; color: #b4551f; }
+
+  /* ── 확정 바 ──────────────────────────────── */
+  .confirm {
+    margin-top: 14px; padding: 15px 15px 14px; border-radius: 12px;
+    background: var(--warn-bg); border: 1px solid #efe0c8;
+  }
+  .confirm p { margin: 0 0 12px; font-size: 14px; font-weight: 700; color: var(--warn-fg); line-height: 1.55; }
+  .confirm .pair { display: flex; gap: 8px; }
+  .confirm .pair .btn { flex: 1; }
+  .confirm .pair .btn.ghost { flex: 0 0 88px; }
+
+  /* ── 알림 ─────────────────────────────────── */
+  .msg { margin-top: 13px; padding: 12px 14px; border-radius: 11px; font-size: 14px; font-weight: 700; line-height: 1.55; }
+  .msg.err { background: var(--err-bg); color: var(--err-fg); }
+  .msg.ok  { background: var(--tint); color: var(--teal-dk); }
+
+  /* ── 완료 ─────────────────────────────────── */
+  .done-top { text-align: center; padding: 6px 0 4px; }
+  .seal {
+    width: 60px; height: 60px; margin: 0 auto 14px; border-radius: 50%;
+    background: var(--teal); color: #fff; font-size: 29px; line-height: 60px; font-weight: 700;
+    box-shadow: 0 8px 20px rgba(11,111,120,.26);
+  }
+  .done-top h2 { margin: 0 0 6px; font-size: 23px; font-weight: 800; letter-spacing: -.5px; }
+  .done-top p { margin: 0; color: var(--ink-2); font-size: 14.5px; line-height: 1.65; }
+  .kv { display: flex; justify-content: space-between; align-items: baseline; gap: 14px; padding: 12px 0; border-bottom: 1px solid #eef0f2; font-size: 14.5px; }
+  .kv:last-child { border-bottom: 0; padding-bottom: 0; }
+  .kv .k { color: var(--ink-3); flex: none; font-size: 13.5px; font-weight: 600; }
+  .kv .v { font-weight: 800; text-align: right; letter-spacing: -.2px; }
+  .divider { height: 1px; background: var(--line); margin: 18px 0; }
+  .facts { margin: 0; padding: 0; list-style: none; }
+  .facts li { position: relative; padding: 0 0 0 13px; margin-bottom: 8px; font-size: 13.5px; color: var(--ink-2); line-height: 1.6; }
+  .facts li:last-child { margin-bottom: 0; }
+  .facts li::before { content: ''; position: absolute; left: 0; top: 9px; width: 4px; height: 4px; border-radius: 50%; background: #b9c2c4; }
+  .call {
+    display: flex; align-items: center; justify-content: center; gap: 7px;
+    min-height: 52px; border-radius: 12px; background: var(--tint); color: var(--teal-dk);
+    font-size: 15px; font-weight: 800; text-decoration: none; border: 1px solid #d8e6e6;
+  }
+
+  /* ── 푸터 ─────────────────────────────────── */
+  .foot { margin-top: 22px; padding: 26px 18px 6px; text-align: center; color: var(--ink-3); font-size: 12.5px; line-height: 1.7; }
+  .foot b { display: block; color: var(--ink-2); font-size: 13.5px; font-weight: 800; margin-bottom: 5px; letter-spacing: -.2px; }
+
+  .hide { display: none !important; }
+  .sr { position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
+  @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="hero">
+    <p class="eyebrow">GS칼텍스 예울마루 · 기획공연 STAY 패키지</p>
+    <p class="beyond">BEYOND THE STAGE</p>
+    <h1>객실 선택</h1>
+    <span class="tag">1일 숙박권 · 스탠다드</span>
+  </header>
+
+  <ol class="steps" id="steps">
+    <li id="st1" aria-current="step"><span class="n">1</span>본인 확인</li>
+    <li id="st2"><span class="n">2</span>객실 선택</li>
+    <li id="st3"><span class="n">3</span>완료</li>
+  </ol>
+
+  <main class="body">
+
+    <!-- 1단계: 본인 확인 -->
+    <section id="step1" aria-labelledby="h1">
+      <div class="card">
+        <h2 id="h1">본인 확인</h2>
+        <p class="lede">예매하실 때 남기신 <b>휴대폰 번호 뒷 4자리</b>를 입력해 주세요.</p>
+        <div class="pinbox">
+          <label for="p4">휴대폰 번호 뒷 4자리</label>
+          <input id="p4" type="tel" inputmode="numeric" pattern="[0-9]*" maxlength="4"
+                 autocomplete="off" placeholder="0000" enterkeyhint="go"
+                 aria-describedby="dots m1">
+          <div class="dots" id="dots" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
+          <span id="dotsr" class="sr" aria-live="polite"></span>
+        </div>
+        <div style="height:16px"></div>
+        <button id="go" class="btn" type="button" disabled>확인</button>
+        <div id="m1" class="msg err hide" role="alert"></div>
+        <p class="note">예매자 명단에 등록된 번호만 확인됩니다.<br>번호가 확인되면 예매하신 공연 날짜에 맞춰 객실을 고르실 수 있어요.</p>
+      </div>
+    </section>
+
+    <!-- 2단계: 객실 선택 -->
+    <section id="step2" class="hide" aria-labelledby="h2">
+      <div class="card">
+        <h2 id="h2">객실 선택</h2>
+        <p class="lede" id="lede2">예매하신 공연 날짜의 숙박입니다. 남은 객실 중 하나를 골라 주세요.</p>
+
+        <div class="fixed">
+          <div class="cap"><span class="lock" aria-hidden="true">🔒</span><span>예매 확정 내역 · 변경 불가</span></div>
+          <div class="show" id="fShow">-</div>
+          <div class="stay">
+            <div class="leg"><div class="k">체크인</div><div class="v" id="fIn">-</div><div class="t" id="fInT">숙박 시설 입실</div></div>
+            <div class="arrow" aria-hidden="true">→</div>
+            <div class="leg"><div class="k">체크아웃</div><div class="v" id="fOut">-</div><div class="t">다음 날 퇴실</div></div>
+          </div>
+        </div>
+
+        <div class="rooms" id="rooms" role="radiogroup" aria-label="객실 형태 선택">
+          <button class="room" type="button" role="radio" aria-checked="false" data-t="double">
+            <span class="mark" aria-hidden="true"></span>
+            <span class="info"><span class="nm">스탠다드 더블</span><span class="ds">큰 침대 1개</span></span>
+            <span class="left" data-l="double">-</span>
+          </button>
+          <button class="room" type="button" role="radio" aria-checked="false" data-t="twin">
+            <span class="mark" aria-hidden="true"></span>
+            <span class="info"><span class="nm">스탠다드 트윈</span><span class="ds">싱글 침대 2개</span></span>
+            <span class="left" data-l="twin">-</span>
+          </button>
+        </div>
+
+        <div style="height:14px"></div>
+        <button id="save" class="btn" type="button" disabled>객실을 선택해 주세요</button>
+
+        <div id="confirm" class="confirm hide">
+          <p id="confirmTxt">이 객실로 확정할까요? 저장 후에는 변경하실 수 없습니다.</p>
+          <div class="pair">
+            <button id="cCancel" class="btn ghost sm" type="button">취소</button>
+            <button id="cOk" class="btn sm" type="button">네, 저장할게요</button>
+          </div>
+        </div>
+
+        <div id="m2" class="msg err hide" role="alert"></div>
+        <p class="note">한 번 저장하면 담당자를 통해서만 변경하실 수 있어요.<br>숙박 시설 사정에 따라 <b>디럭스</b> 타입으로 상향 조정될 수 있습니다(예매 순서 기준).</p>
+      </div>
+    </section>
+
+    <!-- 3단계: 완료 -->
+    <section id="step3" class="hide" aria-labelledby="h3">
+      <div class="card">
+        <div class="done-top">
+          <div class="seal" aria-hidden="true">✓</div>
+          <h2 id="h3">감사합니다</h2>
+          <p>객실 선택이 정상적으로 접수되었습니다.<br>확정 내용은 <b>추후 문자로 안내</b>드리겠습니다.</p>
+        </div>
+        <div class="divider"></div>
+        <div class="kv"><span class="k">예매자</span><span class="v" id="dName">-</span></div>
+        <div class="kv"><span class="k">공연</span><span class="v" id="dShow">-</span></div>
+        <div class="kv"><span class="k">숙박</span><span class="v" id="dStay">-</span></div>
+        <div class="kv"><span class="k">객실</span><span class="v" id="dType">-</span></div>
+        <div class="kv"><span class="k">접수 시각</span><span class="v" id="dAt">-</span></div>
+      </div>
+
+      <div class="card">
+        <h2>숙소 안내</h2>
+        <p class="lede" style="margin-bottom:14px">웅천 퍼스트시티 호텔<br><span style="color:var(--ink-3);font-size:13.5px">전남광주통합특별시 여수시 웅천남1로 52</span></p>
+        <ul class="facts">
+          <li>체크인 시 프런트에서 <b>‘예울마루 STAY 패키지’</b>임을 알려 주세요.</li>
+          <li>예매자 정보(성함, 전화번호 뒷자리)를 말씀해 주세요.</li>
+          <li>주민등록상 거주지 증빙 자료를 함께 보여 주세요.</li>
+          <li>관람일 약 일주일 전, 상품 이용 안내 문자를 보내드립니다.</li>
+        </ul>
+      </div>
+
+      <div class="card">
+        <h2>문의</h2>
+        <p class="lede" style="margin-bottom:14px">변경이 필요하시거나 궁금한 점이 있으시면 연락 주세요.<br><span style="color:var(--ink-3);font-size:13.5px">예울마루 대표전화 · 화~토 10:00~18:00</span></p>
+        <a class="call" href="tel:15447669"><span aria-hidden="true">☎</span> 1544-7669</a>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="foot">
+    <b>GS칼텍스 예울마루</b>
+    1544-7669 · yeulmaru.org<br>
+    <span style="color:#b0b6bd">기획공연 STAY 패키지 객실 선택</span>
+  </footer>
+</div>
+
+<script>
+(function () {
+  var $ = function (id) { return document.getElementById(id); };
+  var p4El = $('p4'), goEl = $('go'), saveEl = $('save');
+  var state = { p4: '', pick: '', busy: false, stay: null, left: {} };
+  var DAY = ['일', '월', '화', '수', '목', '금', '토'];
+
+  /* ── 화면 전환 ───────────────────────────── */
+  function show(n) {
+    [1, 2, 3].forEach(function (i) {
+      $('step' + i).classList.toggle('hide', i !== n);
+      var s = $('st' + i);
+      if (i === n) s.setAttribute('aria-current', 'step'); else s.removeAttribute('aria-current');
+      s.classList.toggle('past', i < n);
+    });
+    window.scrollTo(0, 0);
+  }
+  function say(el, text, kind) {
+    el.textContent = text || '';
+    el.className = 'msg ' + (kind || 'err') + (text ? '' : ' hide');
+  }
+  function busy(btn, on, label) {
+    btn.disabled = on;
+    btn.innerHTML = on ? '<span class="spin" aria-hidden="true"></span>' + label : label;
+  }
+
+  /* ── 통신 ───────────────────────────────── */
+  function api(body) {
+    return fetch('/api/book', {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify(body),
+    }).then(function (r) { return r.json(); }).catch(function () {
+      return { ok: false, msg: '연결이 불안정해요. 잠시 뒤 다시 눌러 주세요.' };
+    });
+  }
+
+  /* ── 날짜 ───────────────────────────────── */
+  function ymd(s) {                       // "2026-10-14" → {y,m,d,dow}
+    if (!s || !/^\d{4}-\d{2}-\d{2}$/.test(s)) return null;
+    var a = s.split('-').map(Number);
+    return { y: a[0], m: a[1], d: a[2], dow: DAY[new Date(Date.UTC(a[0], a[1] - 1, a[2])).getUTCDay()] };
+  }
+  function dateLong(s) { var o = ymd(s); return o ? (o.y + '. ' + o.m + '. ' + o.d + '(' + o.dow + ')') : '-'; }
+  function dateMid(s)  { var o = ymd(s); return o ? (o.m + '. ' + o.d + '(' + o.dow + ')') : '-'; }
+  function dateShort(s) { var o = ymd(s); return o ? (o.m + '월 ' + o.d + '일(' + o.dow + ')') : '-'; }
+  function stamp(ms) {
+    var d = new Date(ms), p = function (n) { return (n < 10 ? '0' : '') + n; };
+    return d.getFullYear() + '. ' + (d.getMonth() + 1) + '. ' + d.getDate() +
+      ' ' + p(d.getHours()) + ':' + p(d.getMinutes());
+  }
+
+  /* ── 예매 확정 내역(공연 = 숙박일) ─────────── */
+  function paintStay(stay) {
+    state.stay = stay || null;
+    if (!stay) {
+      $('fShow').textContent = '예매하신 공연';
+      $('fIn').textContent = '-'; $('fOut').textContent = '-';
+      return;
+    }
+    $('fShow').textContent = stay.title || '예매하신 공연';
+    $('fIn').textContent = dateShort(stay.checkIn);
+    $('fInT').textContent = stay.time ? ('공연 ' + stay.time + ' · 당일 입실') : '숙박 시설 입실';
+    $('fOut').textContent = dateShort(stay.checkOut);
+  }
+
+  /* ── 잔여 수량 ──────────────────────────── */
+  function paintLeft(left) {
+    state.left = left || {};
+    var any = false;
+    Array.prototype.forEach.call(document.querySelectorAll('.room'), function (b) {
+      var t = b.dataset.t, n = Number(state.left[t] || 0), tag = b.querySelector('[data-l="' + t + '"]');
+      tag.textContent = n > 0 ? ('잔여 ' + n + '실') : '마감';
+      tag.classList.toggle('low', n > 0 && n <= 2);
+      b.disabled = n <= 0;
+      b.setAttribute('aria-checked', 'false');
+      b.setAttribute('aria-label', b.querySelector('.nm').textContent + (n > 0 ? (', 잔여 ' + n + '실') : ', 마감'));
+      if (n > 0) any = true;
+    });
+    state.pick = '';
+    hideConfirm();
+    setSave();
+    if (!any) {
+      saveEl.disabled = true;
+      saveEl.textContent = '남은 객실이 없습니다';
+      say($('m2'), '남은 객실이 모두 마감되었어요. 아래 대표전화(1544-7669)로 연락 주시면 도와드리겠습니다.', 'err');
+    }
+  }
+  function setSave() {
+    if (!state.pick) {
+      saveEl.disabled = true;
+      saveEl.textContent = '객실을 선택해 주세요';
+    } else {
+      saveEl.disabled = false;
+      saveEl.textContent = nameOf(state.pick) + ' 저장하기';
+    }
+  }
+  function nameOf(t) {
+    var b = document.querySelector('.room[data-t="' + t + '"]');
+    return b ? b.querySelector('.nm').textContent : t;
+  }
+
+  /* ── 완료 ───────────────────────────────── */
+  function done(bk, stay) {
+    var st = stay || state.stay;
+    $('dName').textContent = bk.name || ('휴대폰 뒷자리 ' + (bk.p4 || state.p4));
+    $('dShow').textContent = bk.show || (st && st.title) || '-';
+    var ci = bk.stayDate || (st && st.checkIn), co = bk.stayOut || (st && st.checkOut);
+    $('dStay').textContent = ci ? (dateLong(ci) + ' → ' + dateMid(co) + ' · 1박') : '-';
+    $('dType').textContent = bk.typeName || bk.type || '-';
+    $('dAt').textContent = stamp(bk.at);
+    show(3);
+  }
+
+  /* ── 1단계 ──────────────────────────────── */
+  function paintDots() {
+    var n = p4El.value.length;
+    Array.prototype.forEach.call($('dots').children, function (d, i) { d.classList.toggle('on', i < n); });
+    $('dotsr').textContent = n + ' / 4 자리 입력';
+    goEl.disabled = n !== 4;
+  }
+  p4El.addEventListener('input', function () {
+    this.value = this.value.replace(/[^0-9]/g, '').slice(0, 4);
+    say($('m1'), '');
+    paintDots();
+  });
+  p4El.addEventListener('keydown', function (e) { if (e.key === 'Enter' && !goEl.disabled) goEl.click(); });
+
+  goEl.addEventListener('click', function () {
+    if (state.busy) return;
+    var v = p4El.value.replace(/[^0-9]/g, '');
+    if (v.length !== 4) { say($('m1'), '숫자 4자리를 입력해 주세요.'); p4El.focus(); return; }
+    state.busy = true; busy(goEl, true, '확인 중...');
+    api({ op: 'auth', p4: v }).then(function (r) {
+      state.busy = false; busy(goEl, false, '확인'); paintDots();
+      if (!r.ok) { say($('m1'), r.msg || '확인하지 못했어요. 잠시 뒤 다시 눌러 주세요.'); p4El.focus(); return; }
+      state.p4 = v;
+      paintStay(r.stay);
+      if (r.done) { done(r.booking, r.stay); return; }
+      $('lede2').innerHTML = (r.name ? '<b>' + r.name + '</b>님, ' : '') +
+        '예매하신 공연 날짜의 숙박입니다.<br>남은 객실 중 하나를 골라 주세요.';
+      paintLeft(r.left);
+      say($('m2'), '');
+      show(2);
+    });
+  });
+
+  /* ── 2단계: 고르기 ──────────────────────── */
+  var rooms = Array.prototype.slice.call(document.querySelectorAll('.room'));
+  rooms.forEach(function (b, i) {
+    b.addEventListener('click', function () {
+      if (state.busy || b.disabled) return;
+      state.pick = b.dataset.t;
+      rooms.forEach(function (x) { x.setAttribute('aria-checked', String(x === b)); });
+      hideConfirm();
+      say($('m2'), '');
+      setSave();
+    });
+    // 라디오 그룹 키보드 이동
+    b.addEventListener('keydown', function (e) {
+      if (['ArrowDown', 'ArrowRight', 'ArrowUp', 'ArrowLeft'].indexOf(e.key) < 0) return;
+      e.preventDefault();
+      var step = (e.key === 'ArrowDown' || e.key === 'ArrowRight') ? 1 : -1;
+      for (var k = 1; k <= rooms.length; k++) {
+        var nx = rooms[(i + step * k + rooms.length * k) % rooms.length];
+        if (!nx.disabled) { nx.focus(); nx.click(); break; }
+      }
+    });
+  });
+
+  /* ── 2단계: 저장(2단 확인) ───────────────── */
+  function showConfirm() {
+    $('confirmTxt').textContent = '‘' + nameOf(state.pick) + '’으로 확정할까요? 저장 후에는 변경하실 수 없습니다.';
+    $('confirm').classList.remove('hide');
+    saveEl.classList.add('hide');
+    $('cOk').focus();
+  }
+  function hideConfirm() {
+    $('confirm').classList.add('hide');
+    saveEl.classList.remove('hide');
+  }
+  saveEl.addEventListener('click', function () {
+    if (state.busy || !state.pick) return;
+    showConfirm();
+  });
+  $('cCancel').addEventListener('click', function () {
+    hideConfirm();
+    var b = document.querySelector('.room[data-t="' + state.pick + '"]');
+    if (b) b.focus();
+  });
+  $('cOk').addEventListener('click', function () {
+    if (state.busy || !state.pick) return;
+    state.busy = true;
+    busy($('cOk'), true, '저장 중...');
+    $('cCancel').disabled = true;
+    rooms.forEach(function (x) { x.disabled = true; });
+    say($('m2'), '');
+    api({ op: 'book', p4: state.p4, type: state.pick }).then(function (r) {
+      state.busy = false;
+      busy($('cOk'), false, '네, 저장할게요');
+      $('cCancel').disabled = false;
+      if (r.ok || r.code === 'already') { done(r.booking, r.stay); return; }
+      hideConfirm();
+      say($('m2'), r.msg || '저장하지 못했어요. 잠시 뒤 다시 눌러 주세요.', 'err');
+      if (r.left) paintLeft(r.left);
+      else { rooms.forEach(function (x) { x.disabled = Number(state.left[x.dataset.t] || 0) <= 0; }); setSave(); }
+    });
+  });
+
+  paintDots();
+  p4El.focus();
+})();
+</script>
+</body>
+</html>
