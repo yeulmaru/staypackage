@@ -18,7 +18,9 @@ function mkR2() {
     _dump: () => [...m.keys()],
   };
 }
-const env = { R2: mkR2(), BOOK_PIN: 'test1234' };
+// 흉내 판의 지연은 tick 하나(≤6ms)라 정착 대기도 그에 맞춘다(실배포 기본값은 250ms).
+// 이 값을 0으로 두면 [5] 동시 클릭이 다시 깨진다 — 그게 이 축이 잡는 것이다.
+const env = { R2: mkR2(), BOOK_PIN: 'test1234', BOOK_SETTLE_MS: 40 };
 const call = (body) => onRequestPost({ request: { json: async () => body }, env }).then(r => r.json());
 
 let pass = 0, fail = 0;

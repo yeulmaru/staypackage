@@ -105,6 +105,27 @@ async function readBooking(env, p4) {
   } catch { return null; }
 }
 
+// 목록이 잠잠해질 때까지 기다렸다가 돌려준다.
+// 「두 번 연속 같은 명단」 = 쓰던 사람들이 다 들어왔다는 신호. 기다리는 간격은 쓰기가 보이기까지
+// 걸리는 시간보다 길어야 한다(BOOK_SETTLE_MS 로 조절 · 기본 250ms).
+const sleep = (ms) => new Promise(r => setTimeout(r, ms));
+
+async function settleList(env, g, t) {
+  const gap = Math.max(0, Number(env.BOOK_SETTLE_MS ?? 250) || 0);
+  const sig = (rows) => rows.filter(b => b.g === g && b.t === t)
+    .map(b => b.p4 + '@' + b.at).sort().join(',');
+
+  let prev = null, rows = [];
+  for (let i = 0; i < 6; i++) {
+    if (gap) await sleep(gap);
+    rows = await listBookings(env);
+    const now = sig(rows);
+    if (now === prev) return rows;      // 두 번 연속 같다 = 다 들어왔다
+    prev = now;
+  }
+  return rows;                          // 계속 흔들리면 마지막으로 본 것으로 판정한다
+}
+
 async function reserve(env, p4, name, g, t, cap, stay) {
   const dup = await readBooking(env, p4);
   if (dup) return { ok: false, code: 'already', booking: dup };
@@ -127,8 +148,14 @@ async function reserve(env, p4, name, g, t, cap, stay) {
   });
 
   // 사후 양보 — 같은 순간에 들어온 사람이 있으면 앞선 순서만 남는다.
-  all = await listBookings(env);
-  const same = all.filter(b => b.g === g && b.t === t)
+  //
+  // ⚠ 쓰자마자 세면 안 된다. 남의 파일이 아직 안 보이는 사이에 세면 자기 순번을 실제보다
+  //   앞으로 계산해서 살아남고, 뒤늦게 보인 사람(나보다 이른 시각)도 자기 기준으로 살아남는다.
+  //   그러면 정원을 넘긴다(실측: 남은 4자리에 6명 → 5명 성공).
+  //   그래서 목록이 잠잠해질 때까지 기다렸다가 센다. 나보다 이른 시각인 사람은 나보다 먼저
+  //   쓰기를 시작했으므로, 마지막 변화 이후 SETTLE 만큼 조용하면 이미 보인다.
+  const settled = await settleList(env, g, t);
+  const same = settled.filter(b => b.g === g && b.t === t)
     .sort((x, y) => (x.at - y.at) || (x.p4 < y.p4 ? -1 : 1));
   const idx = same.findIndex(b => b.p4 === p4);
   if (idx < 0 || idx >= limit) {
