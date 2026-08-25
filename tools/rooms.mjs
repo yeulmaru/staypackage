@@ -6,7 +6,10 @@
 //   node tools/rooms.mjs pending        아직 안 고른 사람 목록(재안내 대상)
 //   node tools/rooms.mjs who 1234       한 사람 조회
 //   node tools/rooms.mjs cancel 1234    선택 취소(자리 즉시 재개방)
-//   node tools/rooms.mjs roster 명단.txt 명단 통째 교체
+//   node tools/rooms.mjs add 1234 b 홍길동   한 명 추가(같은 번호면 수정)
+//   node tools/rooms.mjs move 1234 c         공연(=숙박일)만 바꾸기
+//   node tools/rooms.mjs rm 1234             명단에서 빼기
+//   node tools/rooms.mjs roster 명단.txt      명단 통째 교체
 //   node tools/rooms.mjs csv            전체를 탭 구분으로(엑셀 붙여넣기용)
 //   node tools/rooms.mjs all            현황 + 완료 + 미선택 한 번에
 //
@@ -179,6 +182,51 @@ if (['left', '남은', '현황', 'status'].includes(cmd)) {
   console.log(`\n  ${arg} 선택을 취소했다. 그 자리는 다시 열렸다.`);
   showLeft(await api({ op: 'admin_get' }));
 
+} else if (['add', '추가'].includes(cmd)) {
+  const [p4, g, ...nm] = argv.slice(1);
+  if (!/^\d{4}$/.test(String(p4 || '')) || !String(g || '').trim()) {
+    console.error('예) node tools/rooms.mjs add 1234 b 홍길동     (뒷4자리 · 공연구분 · 이름)');
+    process.exit(2);
+  }
+  const name = nm.join(' ').trim();
+  const before = await api({ op: 'admin_get' });
+  const dup = (before.rows || []).find(x => x.p4 === p4) || (before.pending || []).find(x => x.p4 === p4);
+  const r = await api({ op: 'admin_roster_edit', set: { [p4]: { g: String(g).trim().toLowerCase(), n: name } } });
+  if (r.bad?.length) { console.error(`\n  형식이 안 맞다: ${r.bad.join(', ')}\n`); process.exit(1); }
+  const after = await api({ op: 'admin_get' });
+  const stay = dstr(((after.stay || {})[String(g).trim().toLowerCase()] || {}).date);
+  console.log(`\n  ${dup ? '수정했다' : '추가했다'} — ${p4} · ${name || '이름없음'} · ${stay || g} ${gname(after, String(g).trim().toLowerCase())}`);
+  if (dup && dup.type) console.log(`  ⚠ 이 사람은 이미 ${dup.type === 'double' ? '더블' : '트윈'}을 골랐다. 공연을 바꿨다면 cancel ${p4} 로 다시 고르게 해라.`);
+  console.log(`  명단 ${r.count}명\n`);
+
+} else if (['move', '이동'].includes(cmd)) {
+  const [p4, g] = argv.slice(1);
+  if (!/^\d{4}$/.test(String(p4 || '')) || !String(g || '').trim()) {
+    console.error('예) node tools/rooms.mjs move 1234 c     (뒷4자리 · 바꿀 공연구분)');
+    process.exit(2);
+  }
+  const r0 = await api({ op: 'admin_get' });
+  const hit = (r0.rows || []).find(x => x.p4 === p4) || (r0.pending || []).find(x => x.p4 === p4);
+  if (!hit) { console.error(`\n  ${p4} — 명단에 없다. add 로 넣어라.\n`); process.exit(1); }
+  const gg = String(g).trim().toLowerCase();
+  const r = await api({ op: 'admin_roster_edit', set: { [p4]: { g: gg, n: hit.name || '' } } });
+  const after = await api({ op: 'admin_get' });
+  console.log(`\n  ${p4} · ${hit.name || '이름없음'} → ${dstr(((after.stay || {})[gg] || {}).date) || gg} ${gname(after, gg)}`);
+  if (hit.type) console.log(`  ⚠ 이 사람은 이미 객실을 골랐다. 숙박일이 바뀌었으니 cancel ${p4} 로 다시 고르게 해라.`);
+  console.log(`  명단 ${r.count}명\n`);
+
+} else if (['rm', 'remove', '삭제'].includes(cmd)) {
+  if (!/^\d{4}$/.test(String(arg || ''))) { console.error('뒷 4자리를 줘.  예) node tools/rooms.mjs rm 1234'); process.exit(2); }
+  const r = await api({ op: 'admin_roster_edit', del: [arg] });
+  console.log('');
+  if (r.removed?.length) {
+    console.log(`  ${arg} 를 명단에서 뺐다. 명단 ${r.count}명`);
+    if (r.stillBooked?.length) console.log(`  ⚠ 이 사람은 이미 객실을 골라 자리를 잡고 있다. 비우려면 cancel ${arg} 도 해라.`);
+  } else {
+    console.log(`  ${arg} — 명단에 없다.`);
+  }
+  console.log('');
+
 } else if (cmd === 'roster') {
   if (!arg) { console.error('명단 파일을 줘.  예) node tools/rooms.mjs roster 명단.txt   (- 를 주면 표준입력)'); process.exit(2); }
   const text = arg === '-' ? readFileSync(0, 'utf8') : readFileSync(arg, 'utf8');
@@ -197,6 +245,8 @@ if (['left', '남은', '현황', 'status'].includes(cmd)) {
   }
 
 } else {
-  console.error(`모르는 명령: ${cmd}\n  left | list | pending | all | who <4자리> | cancel <4자리> | roster <파일> | csv`);
+  console.error(`모르는 명령: ${cmd}
+  left | list | pending | all | who <4자리> | cancel <4자리>
+  add <4자리> <구분> [이름] | move <4자리> <구분> | rm <4자리> | roster <파일> | csv`);
   process.exit(2);
 }

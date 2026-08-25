@@ -34,6 +34,7 @@ const SEED_ROSTER = {
   '9012': { g: 'c', n: '박여수' },   // 피아노 피아노 · 10/27
   '3456': { g: 'b', n: '' },        // 이름 없는 예매자
   '7777': { g: 'a', n: '최마감' },   // 마감 화면 확인용
+  '4650': { g: 'a', n: '황세웅' },   // 운영자 테스트용
 };
 await env.R2.put('booking/roster.json', JSON.stringify(SEED_ROSTER));
 await env.R2.put('booking/stock.json', JSON.stringify({
@@ -93,5 +94,5 @@ createServer(async (req, res) => {
 }).listen(PORT, () => {
   console.log('고객 화면   http://localhost:' + PORT + '/');
   console.log('관리자 화면 http://localhost:' + PORT + '/admin.html   (비번 dev1234)');
-  console.log('시드 번호   1234(9/12 김예울) · 5678(10/14 이마루) · 9012(10/27 박여수) · 3456(이름없음) · 7777');
+  console.log('시드 번호   4650(9/12 황세웅) · 1234(9/12 김예울) · 5678(10/14 이마루) · 9012(10/27 박여수) · 3456 · 7777');
 });

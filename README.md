@@ -9,7 +9,7 @@ public/admin.html        관리자 화면 (명단·공연/날짜·수량·현황
 functions/api/book.js    서버 전부
 tools/rooms.mjs          관리자 CLI — 터미널에서 현황 확인
 tools/dev.mjs            로컬 미리보기 서버
-test.mjs                 검증 46축 (node test.mjs)
+test.mjs                 검증 58축 (node test.mjs)
 CLAUDE.md                클로드코드용 안내
 docs/인수인계.md          계약·실측·다음 후보
 ```
@@ -141,5 +141,5 @@ Cloudflare Pages에 붙인다. 고객이 문자 링크로 바로 들어와야 �
 ```bash
 node test.mjs
 ```
-46가지를 실제로 돌려본다(인증·공연별 재고 격리·날짜 산출·중복 차단·동시 클릭 정원 초과 방지·관리자 잠금).
+58가지를 실제로 돌려본다(인증·공연별 재고 격리·날짜 산출·중복 차단·동시 클릭 정원 초과 방지·관리자 잠금).
 고치고 나서 이게 전부 통과해야 한다.

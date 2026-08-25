@@ -15,9 +15,22 @@ node tools/rooms.mjs pending      # 아직 안 고른 사람 (재안내 대상)
 node tools/rooms.mjs all          # 위 셋 한 번에
 node tools/rooms.mjs who 1234     # 한 사람 조회
 node tools/rooms.mjs cancel 1234  # 선택 취소 (자리 즉시 재개방)
-node tools/rooms.mjs roster 명단.txt   # 명단 통째 교체
 node tools/rooms.mjs csv          # 탭 구분 출력(엑셀 붙여넣기)
 ```
+
+**"○○○ 추가해줘" / "○○○ 빼줘" / "○○○ 날짜 바꿔줘" 류의 요청도 바로 아래를 실행한다.**
+명단을 통째로 다시 받지 마라 — 아래 명령이 나머지는 안 건드린다.
+
+```bash
+node tools/rooms.mjs add 1234 b 홍길동   # 한 명 추가 (같은 뒷4자리면 수정)
+node tools/rooms.mjs move 1234 c         # 공연(=숙박일)만 바꾸기
+node tools/rooms.mjs rm 1234             # 명단에서 빼기
+node tools/rooms.mjs roster 명단.txt      # 명단 통째 교체 (전체를 갈아엎을 때만)
+```
+
+운영자가 휴대폰 번호를 통째로 주면(예: `01030214650`) **뒷 4자리만** 쓴다 — `4650`.
+공연 구분을 안 알려주면 임의로 정하지 말고 어느 공연인지 물어라(그게 곧 그 사람의 숙박일이다).
+이미 객실을 고른 사람의 공연을 바꿨으면 `cancel` 도 해야 다시 고를 수 있다 — CLI가 그때 경고한다.
 
 접속 정보가 없다고 나오면 저장소 루트에 `.booking.json` 을 만들라고 안내한다(git에 안 올라간다):
 
@@ -36,8 +49,9 @@ node tools/rooms.mjs csv          # 탭 구분 출력(엑셀 붙여넣기)
 | `functions/api/book.js` | 서버 전부. 진입점은 `onRequestPost` 하나, `op` 로 갈린다 |
 | `tools/rooms.mjs` | 관리자 CLI — 위 명령들 |
 | `tools/dev.mjs` | 로컬 미리보기 서버(R2를 메모리로 흉내) |
-| `test.mjs` | 검증 46축. **서버를 고쳤으면 46/46이어야 한다** |
+| `test.mjs` | 검증 58축. **서버를 고쳤으면 58/58이어야 한다** |
 | `docs/인수인계.md` | 계약·실측·다음 후보 |
+| `docs/관리자안내.md` | 운영자용 안내문(명단·문자 문구·상황별 대응) |
 
 ## 고치기 전에 반드시 읽을 것 — 깨면 안 되는 계약 3종
 
@@ -53,6 +67,6 @@ node tools/rooms.mjs csv          # 탭 구분 출력(엑셀 붙여넣기)
 ## 손대고 나서
 
 ```bash
-node test.mjs        # 46/46 이어야 한다
+node test.mjs        # 58/58 이어야 한다
 ```
 화면을 만졌으면 `node tools/dev.mjs` 로 띄워 폰 폭(390)에서 확인한다.

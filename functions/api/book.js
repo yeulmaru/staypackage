@@ -256,6 +256,37 @@ export async function onRequestPost({ request, env }) {
       return J({ ok: true, count: Object.keys(map).length, dups, bad });
     }
 
+    // 명단 한 명씩 고치기 — 통째 교체(admin_roster)와 달리 나머지는 손대지 않는다.
+    // set 은 추가와 수정을 겸한다(같은 뒷4자리면 덮어쓴다). del 은 명단에서만 뺀다.
+    if (op === 'admin_roster_edit') {
+      const roster = await readJson(env, 'roster.json', {});
+      const set = (b.set && typeof b.set === 'object') ? b.set : {};
+      const del = Array.isArray(b.del) ? b.del : [];
+      const saved = [], removed = [], bad = [], missing = [];
+      for (const k of Object.keys(set)) {
+        const p4 = String(k).replace(/[^0-9]/g, '').slice(-4);
+        const src = set[k] || {};
+        const g = String(src.g || '').trim().toLowerCase();
+        const n = String(src.n == null ? '' : src.n).trim();
+        if (!p4ok(p4) || !g) { bad.push(String(k)); continue; }
+        roster[p4] = { g, n };
+        saved.push(p4);
+      }
+      for (const k of del) {
+        const p4 = String(k).replace(/[^0-9]/g, '').slice(-4);
+        if (roster[p4]) { delete roster[p4]; removed.push(p4); }
+        else missing.push(p4);
+      }
+      await env.R2.put(PFX + 'roster.json', JSON.stringify(roster), {
+        httpMetadata: { contentType: 'application/json; charset=utf-8' },
+      });
+      // 명단에서 빼도 이미 고른 객실은 안 지운다 — 자리를 비우려면 admin_cancel 을 따로 불러야 한다.
+      const all = await listBookings(env);
+      const booked = new Set(all.map(x => x.p4));
+      const stillBooked = removed.filter(p => booked.has(p));
+      return J({ ok: true, count: Object.keys(roster).length, saved, removed, bad, missing, stillBooked });
+    }
+
     if (op === 'admin_stock') {
       const prev = await getStock(env);
       const cap = {};

@@ -143,5 +143,37 @@ ok('명단에 있고 안 고른 사람은 목록에 있다', pend.includes('1010
 ok('미선택 항목에 구분이 붙는다', r.pending.every(x => typeof x.g === 'string' && x.g), r.pending[0]);
 ok('관리자 응답에 공연·숙박일이 실린다', r.stay.a.checkIn === '2026-09-12', r.stay && r.stay.a);
 
+console.log('\n[11] 명단 한 명씩 고치기 (통째 교체 말고)');
+r = await call({ op: 'admin_roster_edit', pin: 'test1234', set: { '4650': { g: 'a', n: '황세웅' } } });
+ok('한 명 추가', r.ok && r.saved.includes('4650'), r);
+r = await call({ op: 'auth', p4: '4650' });
+ok('추가한 사람이 바로 들어온다', r.ok && r.name === '황세웅', r);
+r = await call({ op: 'admin_get', pin: 'test1234' });
+ok('기존 명단은 그대로 남는다', r.rosterCount === 14, r.rosterCount);
+
+r = await call({ op: 'admin_roster_edit', pin: 'test1234', set: { '4650': { g: 'b', n: '황세웅' } } });
+ok('같은 번호는 덮어쓴다', r.ok && r.count === 14, r.count);
+r = await call({ op: 'auth', p4: '4650' });
+ok('공연을 바꾸면 숙박일도 따라 바뀐다', r.stay.checkIn === '2026-09-30', r.stay);
+
+r = await call({ op: 'admin_roster_edit', pin: 'test1234', set: { '99': { g: 'a' } } });
+ok('4자리 아니면 안 넣는다', r.bad.includes('99') && r.count === 14, r);
+r = await call({ op: 'admin_roster_edit', pin: 'test1234', set: { '4651': { n: '구분없음' } } });
+ok('구분이 없으면 안 넣는다', r.bad.includes('4651') && r.count === 14, r);
+
+r = await call({ op: 'admin_roster_edit', pin: 'test1234', del: ['4650'] });
+ok('명단에서 뺀다', r.ok && r.removed.includes('4650') && r.count === 13, r);
+r = await call({ op: 'auth', p4: '4650' });
+ok('뺀 사람은 다시 못 들어온다', !r.ok && r.code === 'notfound', r);
+r = await call({ op: 'admin_roster_edit', pin: 'test1234', del: ['4650'] });
+ok('없는 번호를 빼도 조용히 알린다', r.ok && r.missing.includes('4650'), r);
+
+// 이미 고른 사람을 명단에서 빼면 자리는 그대로 잡혀 있다 — 알려줘야 한다
+r = await call({ op: 'admin_roster_edit', pin: 'test1234', del: ['2002'] });
+ok('이미 고른 사람을 빼면 자리 남아 있다고 알린다', r.stillBooked.includes('2002'), r);
+
+r = await call({ op: 'admin_roster_edit', pin: '틀린비번', set: { '1212': { g: 'a' } } });
+ok('명단 수정도 비번 없으면 차단', !r.ok && r.code === 'badpin', r);
+
 console.log('\n──────────  통과 ' + pass + ' · 실패 ' + fail + '  ──────────');
 process.exit(fail ? 1 : 0);
