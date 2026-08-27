@@ -57,7 +57,10 @@
   .gcard .n .k { font-size: 11px; color: var(--ink-3); font-weight: 700; }
   .gcard .n .v { font-size: 17px; font-weight: 800; letter-spacing: -.4px; }
   .gcard .n .v small { font-size: 12px; font-weight: 700; color: var(--ink-3); }
-  .gcard .n.zero .v { color: var(--err-fg); }
+  .gcard .n .r { font-size: 11.5px; font-weight: 700; color: var(--ink-3); margin-top: 1px; }
+  .gcard .n.full { background: #fdf3f2; border-color: #f2d6d3; }
+  .gcard .n.full .v { color: var(--err-fg); }
+  .gcard .n.full .r { color: var(--err-fg); }
   .tot { background: #fff; border: 1px solid var(--line); border-radius: 11px; padding: 11px 13px; font-size: 13.5px; font-weight: 700; color: var(--ink-2); }
   .tot b { color: var(--teal-dk); }
 
@@ -101,8 +104,8 @@
 
   <section id="panel" class="hide">
     <div class="card">
-      <h2>남은 객실</h2>
-      <p class="muted" style="margin:0 0 12px">남은 수량은 저장하지 않고 <b>정원 − 실제 선택 건수</b>로 매번 계산한다.</p>
+      <h2>객실 현황</h2>
+      <p class="muted" style="margin:0 0 12px">큰 숫자는 <b>찬 객실</b>이다(찬 / 정원). 남은 수량은 저장하지 않고 매번 다시 센다.</p>
       <div class="sum" id="sum"></div>
       <div class="tot" id="tot"></div>
       <div class="row" style="margin-top:12px">
@@ -201,17 +204,24 @@
     var h = '', tl = 0, tc = 0;
     keys.forEach(function (g) {
       var c = cap[g] || {}, l = left[g] || {}, s = shows[g] || {}, st = stay[g] || {};
-      var sd = (l.double == null ? 0 : l.double), sw = (l.twin == null ? 0 : l.twin);
-      tl += sd + sw; tc += (c.double || 0) + (c.twin || 0);
+      var capD = c.double || 0, capW = c.twin || 0;
+      var sd = (l.double == null ? 0 : l.double), sw = (l.twin == null ? 0 : l.twin);   // 남은
+      var ud = Math.max(0, capD - sd), uw = Math.max(0, capW - sw);                     // 찬
+      tl += sd + sw; tc += capD + capW;
+      var cell = function (nm, used, capN, leftN) {
+        return '<div class="n' + (leftN ? '' : ' full') + '">' +
+          '<div class="k">' + nm + '</div>' +
+          '<div class="v">' + used + ' <small>/ ' + capN + '</small></div>' +
+          '<div class="r">' + (leftN ? (leftN + '실 남음') : '마감') + '</div></div>';
+      };
       h += '<div class="gcard"><div class="hd"><span class="d">' + esc(dstr(st.date) || labels[g] || g.toUpperCase()) + '</span>' +
         '<span class="t">' + esc(s.title || '') + '</span></div><div class="nums">' +
-        '<div class="n' + (sd ? '' : ' zero') + '"><div class="k">스탠다드 더블</div><div class="v">' + sd + ' <small>/ ' + (c.double || 0) + '</small></div></div>' +
-        '<div class="n' + (sw ? '' : ' zero') + '"><div class="k">스탠다드 트윈</div><div class="v">' + sw + ' <small>/ ' + (c.twin || 0) + '</small></div></div>' +
+        cell('스탠다드 더블', ud, capD, sd) + cell('스탠다드 트윈', uw, capW, sw) +
         '</div></div>';
     });
     $('sum').innerHTML = h;
-    $('tot').innerHTML = '전체 <b>' + tl + ' / ' + tc + '실</b> 남음 · 선택 완료 <b>' + (r.rows || []).length +
-      '건</b> · 명단 <b>' + (r.rosterCount || 0) + '명</b> · 미선택 <b>' + (r.pending || []).length + '명</b>';
+    $('tot').innerHTML = '전체 <b>' + (tc - tl) + ' / ' + tc + '실</b> 찬 · <b>' + tl + '실</b> 남음 · ' +
+      '명단 <b>' + (r.rosterCount || 0) + '명</b> · 미선택 <b>' + (r.pending || []).length + '명</b>';
 
     // 선택 완료
     var rows = r.rows || [];

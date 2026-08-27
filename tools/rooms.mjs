@@ -105,20 +105,23 @@ function showLeft(r) {
   let tl = 0, tc = 0;
   for (const g of Object.keys(r.cap)) {
     const c = r.cap[g] || {}, l = (r.left || {})[g] || {}, st = (r.stay || {})[g] || {};
-    const sum = (l.double || 0) + (l.twin || 0), all = (c.double || 0) + (c.twin || 0);
+    const capD = c.double ?? 0, capW = c.twin ?? 0;
+    const leftD = l.double ?? 0, leftW = l.twin ?? 0;
+    const sum = leftD + leftW, all = capD + capW;
     tl += sum; tc += all;
     rows.push([
       dstr(st.date) || (r.labels || {})[g] || g.toUpperCase(),
       gname(r, g),
-      `${l.double ?? 0} / ${c.double ?? 0}`,
-      `${l.twin ?? 0} / ${c.twin ?? 0}`,
-      `${sum} / ${all}`,
+      `${capD - leftD} / ${capD}`,
+      `${capW - leftW} / ${capW}`,
+      `${all - sum} / ${all}`,
+      `${sum}`,
       bar(sum, all),
     ]);
   }
-  console.log('\n■ 남은 객실  (남은 / 전체)\n');
-  console.log(table(['숙박일', '공연', '더블', '트윈', '합계', ''], rows, ['', '', 'r', 'r', 'r', '']));
-  console.log(`\n  전체 ${tl} / ${tc}실 남음 · 선택 완료 ${(r.rows || []).length}건 · 명단 ${r.rosterCount || 0}명 · 미선택 ${(r.pending || []).length}명\n`);
+  console.log('\n■ 객실 현황  (찬 객실 / 정원)\n');
+  console.log(table(['숙박일', '공연', '더블', '트윈', '합계', '남은', ''], rows, ['', '', 'r', 'r', 'r', 'r', '']));
+  console.log(`\n  전체 ${tc - tl} / ${tc}실 찬 · ${tl}실 남음 · 명단 ${r.rosterCount || 0}명 · 미선택 ${(r.pending || []).length}명\n`);
 }
 function showList(r) {
   const rows = (r.rows || []).map(b => [
