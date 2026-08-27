@@ -146,7 +146,7 @@
     <div class="card">
       <h2>터미널에서 보기</h2>
       <p class="muted" style="margin:0 0 11px">이 화면 없이도 클로드코드·터미널에서 바로 확인할 수 있다.</p>
-      <div class="cli"><b>node tools/rooms.mjs</b>          남은 객실<br>
+      <div class="cli"><b>node tools/rooms.mjs</b>          객실 현황<br>
 <b>node tools/rooms.mjs list</b>     선택 완료 목록<br>
 <b>node tools/rooms.mjs pending</b>  아직 안 고른 사람<br>
 <b>node tools/rooms.mjs who 1234</b> 한 사람 조회<br>
@@ -200,7 +200,7 @@
     var cap = r.cap || {}, labels = r.labels || {}, left = r.left || {}, shows = r.shows || {}, stay = r.stay || {};
     var keys = Object.keys(cap); if (!keys.length) keys = ['a', 'b', 'c'];
 
-    // 남은 객실
+    // 객실 현황
     var h = '', tl = 0, tc = 0;
     keys.forEach(function (g) {
       var c = cap[g] || {}, l = left[g] || {}, s = shows[g] || {}, st = stay[g] || {};
