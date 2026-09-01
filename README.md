@@ -64,13 +64,13 @@ node tools/rooms.mjs csv          # 탭 구분(엑셀 붙여넣기)
   전체 37 / 40실 남음 · 선택 완료 3건 · 명단 5명 · 미선택 2명
 ```
 
-접속 정보는 저장소 루트의 `.booking.json` 에 넣는다(`.gitignore` 에 들어 있어 커밋되지 않는다):
+주소는 실서비스(`https://staypackage.pages.dev`)가 기본값이다. 비번은 저장소 루트의 `.booking.json` 에 넣는다(`.gitignore` 에 들어 있어 커밋되지 않는다):
 
 ```json
-{ "url": "https://<배포주소>", "pin": "<BOOK_PIN 값>" }
+{ "pin": "<BOOK_PIN 값>" }
 ```
 
-환경 변수 `BOOK_URL` · `BOOK_PIN` 으로 줘도 된다.
+환경 변수 `BOOK_PIN` 으로 줘도 되고, 다른 배포를 보려면 `BOOK_URL` 이나 `.booking.json` 의 `"url"` 로 덮어쓴다.
 
 ## 3. 배포 전에 화면 먼저 보기
 
