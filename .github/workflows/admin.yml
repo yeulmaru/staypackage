@@ -1,0 +1,63 @@
+# 관리자 명령 다리 — 시크릿 MANAGE_PW(관리자 비번)는 워크플로 안에서만 꺼낼 수 있다.
+#
+# 누가 쓰나
+#   · 운영자: Actions 탭 → 「관리자 명령」 → Run workflow → cmd 입력 (터미널 없이)
+#   · Claude 세션: BOOK_PIN 이 없을 때 이 워크플로를 dispatch 하고 로그로 결과를 읽는다 (CLAUDE.md 참조)
+#
+# ⚠ 이 저장소는 공개다 — 로그도 공개다. 그래서:
+#   · 명단이 찍히는 명령(list/pending/who/csv/all)은 여기서 거절한다.
+#   · 허용 명령(add/move/rm/cancel/left)도 원본 출력은 버리고, 이름·번호 없는 요약만 남긴다.
+#   · run-name 등에 입력값을 올리지 마라 — cmd 에 이름·번호가 들어 있다.
+name: 관리자 명령
+
+on:
+  workflow_dispatch:
+    inputs:
+      cmd:
+        description: 'rooms.mjs 명령 — add/move/rm/cancel/left 만 (예: add 9683 c 홍길동)'
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+concurrency:
+  group: roster-admin
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: 실행 — 로그에는 요약만
+        env:
+          BOOK_PIN: ${{ secrets.MANAGE_PW }}
+          CMD: ${{ inputs.cmd }}
+        run: |
+          set -f
+          set -- $CMD
+          case "${1:-}" in
+            add|move|rm|cancel|추가|이동|삭제) ;;
+            left|status|현황) ;;
+            list|pending|who|csv|all|목록|미선택)
+              echo "거절 — 공개 로그에 명단(이름·번호)을 찍을 수 없다. $1 은 비번(BOOK_PIN)으로 로컬이나 세션에서 실행해라."
+              exit 2 ;;
+            *)
+              echo "허용 안 된 명령: '${1:-}' (add/move/rm/cancel/left 만)"
+              exit 2 ;;
+          esac
+          if node tools/rooms.mjs "$@" > /tmp/out.txt 2>&1; then
+            echo "성공: $1"
+            grep -o '명단 [0-9]*명' /tmp/out.txt || true
+          else
+            code=$?
+            echo "실패: $1 (exit $code)"
+            grep -oE '(비번이 달라|마감|명단에 없다|형식이 안 맞다|응답을 읽지 못했|연결 실패)' /tmp/out.txt | head -1 \
+              || echo "(원문은 명단 보호를 위해 로그에 안 남긴다 — 비번으로 직접 실행해 확인해라)"
+            exit $code
+          fi
+          echo
+          node tools/rooms.mjs left
