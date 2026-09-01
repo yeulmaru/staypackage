@@ -13,9 +13,10 @@
 //   node tools/rooms.mjs csv            전체를 탭 구분으로(엑셀 붙여넣기용)
 //   node tools/rooms.mjs all            현황 + 완료 + 미선택 한 번에
 //
-// 접속 정보는 아래 셋 중 하나로 준다(위가 우선):
-//   1) 환경 변수      BOOK_URL, BOOK_PIN
-//   2) 저장소 루트의  .booking.json   → { "url": "https://...", "pin": "..." }
+// 주소는 실서비스(https://staypackage.pages.dev)가 기본값 — BOOK_URL 이나 .booking.json 의 "url" 로 덮어쓴다.
+// 관리자 비번은 아래 중 하나로 준다(위가 우선):
+//   1) 환경 변수      BOOK_PIN
+//   2) 저장소 루트의  .booking.json   → { "pin": "..." }
 //   3) --local        로컬 미리보기 서버(tools/dev.mjs · http://localhost:8788 · 비번 dev1234)
 import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
@@ -24,22 +25,27 @@ const ROOT = fileURLToPath(new URL('../', import.meta.url));
 const LOCAL = process.argv.includes('--local');
 const argv = process.argv.slice(2).filter(a => a !== '--local');
 
+const LIVE_URL = 'https://staypackage.pages.dev'; // 실서비스 — 주소는 비밀이 아니라 기본값으로 박아 둔다
+
 function conf() {
   if (LOCAL) return { url: 'http://localhost:8788', pin: 'dev1234' };
   let f = {};
   try { f = JSON.parse(readFileSync(ROOT + '.booking.json', 'utf8')); } catch { /* 없으면 환경 변수로 */ }
-  const url = (process.env.BOOK_URL || f.url || '').replace(/\/+$/, '');
+  const url = (process.env.BOOK_URL || f.url || LIVE_URL).replace(/\/+$/, '');
   const pin = process.env.BOOK_PIN || f.pin || '';
-  if (!url || !pin) {
+  if (!pin) {
     console.error(`
-접속 정보가 없어. 둘 중 하나로 넣어줘.
+관리자 비번이 없어. 둘 중 하나로 넣어줘. (주소는 ${LIVE_URL} 가 기본값이라 안 줘도 된다)
 
   1) 저장소 루트에 .booking.json  (git에 안 올라간다)
-     { "url": "https://내주소.pages.dev", "pin": "관리자비번" }
+     { "pin": "관리자비번" }
 
   2) 환경 변수
-     BOOK_URL=https://내주소.pages.dev BOOK_PIN=관리자비번 node tools/rooms.mjs
+     BOOK_PIN=관리자비번 node tools/rooms.mjs
+     claude.ai/code 클라우드 세션이면 환경 설정의 환경 변수에 BOOK_PIN 을 넣어 둔다.
+     GitHub Actions 시크릿은 여기로 전달되지 않는다.
 
+  다른 배포를 보려면 BOOK_URL 이나 .booking.json 의 "url" 로 덮어쓴다.
   배포 전이면 로컬로 볼 수 있어:  node tools/dev.mjs   (다른 창)  →  node tools/rooms.mjs --local
 `.trim());
     process.exit(2);
